@@ -65,4 +65,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1 {
+    @apply text-3xl lg:text-4xl xl:text-5xl font-semibold mb-6;
+  }
 }
