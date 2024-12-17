@@ -1,8 +1,13 @@
+import { UserButton } from '@clerk/nextjs'
 import React from 'react'
 
 const EventsPage = () => {
   return (
-    <div>EventsPage</div>
+
+    <main>
+      <div>EventsPage</div>
+      <UserButton />
+    </main>
   )
 }
 
