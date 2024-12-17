@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`min-h-screen ${ubuntuSans.variable} ${ubuntuMono.variable} antialiased`}
+        className={`min-h-screen ${ubuntuSans.variable} ${ubuntuMono.variable} antialiased font-sans`}
       >
         {children}
       </body>
