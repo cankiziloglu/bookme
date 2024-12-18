@@ -16,6 +16,8 @@ import { formatEventDescription } from '@/lib/formatters';
 import CopyEventButton from '@/components/copy-event-button';
 import { cn } from '@/lib/utils';
 
+export const revalidate = 0;
+
 const EventsPage = async () => {
   const { userId, redirectToSignIn } = await auth();
   if (userId == null) return redirectToSignIn();

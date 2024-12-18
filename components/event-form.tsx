@@ -18,9 +18,33 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { Textarea } from './ui/textarea';
 import { Switch } from './ui/switch';
-import { createEvent, updateEvent } from '@/server/actions/events';
+import { createEvent, deleteEvent, updateEvent } from '@/server/actions/events';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog';
+import { useTransition } from 'react';
 
-export default function EventForm({event}:{event?: {id: string, name: string, durationInMinutes: number, isActive: boolean, description?: string}}) {
+export default function EventForm({
+  event,
+}: {
+  event?: {
+    id: string;
+    name: string;
+    durationInMinutes: number;
+    isActive: boolean;
+    description?: string;
+  };
+}) {
+  const [isDeletePending, startDeleteTransition] = useTransition();
+
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: event ?? {
@@ -32,19 +56,23 @@ export default function EventForm({event}:{event?: {id: string, name: string, du
   });
 
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
-    const action = event == null ? createEvent : updateEvent.bind(null, event.id)
-    const data = await action(values)
+    const action =
+      event == null ? createEvent : updateEvent.bind(null, event.id);
+    const data = await action(values);
 
     if (data.error) {
       form.setError('root', {
-        message: 'There was an error saving the event. Please try again.'
-      })
+        message: 'There was an error saving the event. Please try again.',
+      });
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='flex flex-col gap-6'
+      >
         <FormField
           control={form.control}
           name='name'
@@ -54,7 +82,9 @@ export default function EventForm({event}:{event?: {id: string, name: string, du
               <FormControl>
                 <Input {...field} />
               </FormControl>
-              <FormDescription>The name users will see when booking</FormDescription>
+              <FormDescription>
+                The name users will see when booking
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -66,7 +96,7 @@ export default function EventForm({event}:{event?: {id: string, name: string, du
             <FormItem>
               <FormLabel>Duration</FormLabel>
               <FormControl>
-                <Input {...field} type='number'/>
+                <Input {...field} type='number' />
               </FormControl>
               <FormDescription>In Minutes</FormDescription>
               <FormMessage />
@@ -80,9 +110,11 @@ export default function EventForm({event}:{event?: {id: string, name: string, du
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea {...field} className='resize-none h-24'/>
+                <Textarea {...field} className='resize-none h-24' />
               </FormControl>
-              <FormDescription>Optional description of the event</FormDescription>
+              <FormDescription>
+                Optional description of the event
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -93,15 +125,17 @@ export default function EventForm({event}:{event?: {id: string, name: string, du
           render={({ field }) => (
             <FormItem>
               <div className='flex gap-2 items-center'>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
                 <FormLabel>Active</FormLabel>
-                </div>
-              <FormDescription>Inactive events will not be visible for users to book</FormDescription>
+              </div>
+              <FormDescription>
+                Inactive events will not be visible for users to book
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -112,6 +146,47 @@ export default function EventForm({event}:{event?: {id: string, name: string, du
           </div>
         )}
         <div className='flex gap-2 justify-end pt-2'>
+          {event && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant='destructiveGhost'
+                  disabled={isDeletePending || form.formState.isSubmitting}
+                >
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the event.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className='bg-destructive'
+                    disabled={isDeletePending || form.formState.isSubmitting}
+                    onClick={() => {
+                      startDeleteTransition(async () => {
+                        const data = await deleteEvent(event.id);
+                        if (data.error) {
+                          form.setError('root', {
+                            message:
+                              'There was an error deleting the event. Please try again.',
+                          });
+                        }
+                      });
+                    }}
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
           <Button asChild type='button' variant='outline'>
             <Link href={'/events'}>Cancel</Link>
           </Button>
