@@ -187,10 +187,20 @@ export default function EventForm({
               </AlertDialogContent>
             </AlertDialog>
           )}
-          <Button asChild type='button' variant='outline'>
+          <Button
+            asChild
+            type='button'
+            variant='outline'
+            disabled={isDeletePending || form.formState.isSubmitting}
+          >
             <Link href={'/events'}>Cancel</Link>
           </Button>
-          <Button type='submit'>Save</Button>
+          <Button
+            type='submit'
+            disabled={isDeletePending || form.formState.isSubmitting}
+          >
+            Save
+          </Button>
         </div>
       </form>
     </Form>
