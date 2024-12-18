@@ -18,19 +18,27 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { Textarea } from './ui/textarea';
 import { Switch } from './ui/switch';
+import { createEvent } from '@/server/actions/events';
 
 export default function EventForm() {
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
+      name: '',
       durationInMinutes: 30,
       isActive: true,
       description: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof eventFormSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof eventFormSchema>) {
+    const data = await createEvent(values)
+
+    if (data.error) {
+      form.setError('root', {
+        message: 'There was an error saving the event. Please try again.'
+      })
+    }
   }
 
   return (
@@ -97,6 +105,11 @@ export default function EventForm() {
             </FormItem>
           )}
         />
+        {form.formState.errors.root && (
+          <div className='text-destructive'>
+            {form.formState.errors.root.message}
+          </div>
+        )}
         <div className='flex gap-2 justify-end pt-2'>
           <Button asChild type='button' variant='outline'>
             <Link href={'/events'}>Cancel</Link>
