@@ -9,3 +9,11 @@ export function formatEventDescription(duration: number) {
   if (minutes === 0) return `${hours} ${hourString}`;
   return `${hours} ${hourString} ${minutes} ${minuteString}`;
 }
+
+
+export function formatTimezoneOffset(timezone: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    timeZone: timezone,
+    timeZoneName: 'longOffset'
+  }).formatToParts(new Date()).find(part => part.type == "timeZoneName")?.value
+}

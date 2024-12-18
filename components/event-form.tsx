@@ -1,6 +1,6 @@
 'use client';
 
-import { eventFormSchema } from '@/lib/event-form-schema';
+import { eventFormSchema } from '@/lib/form-schemas';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';

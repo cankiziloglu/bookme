@@ -2,7 +2,7 @@
 
 import { db } from '@/db/db';
 import { EventTable } from '@/db/schema';
-import { eventFormSchema } from '@/lib/event-form-schema';
+import { eventFormSchema } from '@/lib/form-schemas';
 import { auth } from '@clerk/nextjs/server';
 import { and, eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
