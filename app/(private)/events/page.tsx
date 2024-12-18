@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { formatEventDescription } from '@/lib/formatters';
-import CopyEventButton from '@/components/CopyEventButton';
+import CopyEventButton from '@/components/copy-event-button';
 import { cn } from '@/lib/utils';
 
 const EventsPage = async () => {
