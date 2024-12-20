@@ -21,7 +21,6 @@ export default async function BookingPage({
 }) {
   const { clerkUserId } = await params;
 
-  console.log(clerkUserId);
   const events = await db.query.EventTable.findMany({
     where: ({ clerkUserId: userId, isActive }, { eq, and }) =>
       and(eq(userId, clerkUserId), eq(isActive, true)),

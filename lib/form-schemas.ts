@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { DAYS_OF_WEEK_IN_ORDER } from './constants';
 import { timeToInt } from './utils';
+import { startOfDay } from 'date-fns';
 
 export const eventFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -61,4 +62,13 @@ export const scheduleFormSchema = z.object({
         }
       });
     }),
+});
+
+export const meetingFormSchema = z.object({
+  startTime: z.date().min(new Date()),
+  guestEmail: z.string().email().min(1, 'Required'),
+  guestName: z.string().min(1, 'Required'),
+  guestNotes: z.string().optional(),
+  timezone: z.string().min(1, 'Required'),
+  date: z.date().min(startOfDay(new Date()), 'Must be in the future'),
 });
