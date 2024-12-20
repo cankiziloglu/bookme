@@ -20,14 +20,15 @@ import {
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+export const revalidate = 0;
+
 export default async function BookEventPage({
   params,
 }: {
   params: { clerkUserId: string; eventId: string };
-  }) {
-  
-  const { clerkUserId, eventId } = await params
-  
+}) {
+  const { clerkUserId, eventId } = await params;
+
   const event = await db.query.EventTable.findFirst({
     where: ({ clerkUserId: userId, isActive, id }, { eq, and }) =>
       and(eq(isActive, true), eq(userId, clerkUserId), eq(id, eventId)),
